@@ -1,4 +1,4 @@
-export const useUsePokeApi = () => {
+export const usePokeApi = () => {
   const config = useRuntimeConfig();
 
   const pokeApi = $fetch.create({
