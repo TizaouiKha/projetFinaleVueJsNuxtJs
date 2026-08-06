@@ -22,3 +22,13 @@ logs
 .env
 .env.*
 !.env.example
+
+# Generated Prisma client
+/app/generated/prisma
+
+# Local tool / agent folders
+.agents
+.claude
+.windsurf
+
+
