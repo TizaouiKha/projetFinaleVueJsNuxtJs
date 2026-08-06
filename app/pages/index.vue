@@ -1,17 +1,21 @@
 <script setup lang="ts">
-import { usePokemonStore } from '../stores/pokemon'
+import { onMounted } from 'vue'
+import { usePokemon } from '~/composables/usePokemon'
 
-const pokemonStore = usePokemonStore()
+const { allPokemons, fetchPage, types, fetchTypes, totalPages, itemsPerPage, fetchPokemonsByType, currentPage, nextPage, previousPage, total, search } = usePokemon()
 
 onMounted(async () => {
-    if (pokemonStore.allPokemons.length === 0) {
-        await pokemonStore.loadAllPokemons()
-    }
-
-    if (pokemonStore.types.length === 0) {
-        await pokemonStore.loadTypes()
-    }
+    await fetchTypes()
+    await fetchPage(1)
 })
+
+const handleFilterByType = async (type: string | null) => {
+    if (type) {
+        await fetchPokemonsByType(type)
+    } else {
+        await fetchPage(1)
+    }
+}
 </script>
 
 <template>
@@ -29,21 +33,20 @@ onMounted(async () => {
                         <label for="search" class="text-sm text-slate-300">Rechercher</label>
                         <input
                             id="search"
-                            v-model="pokemonStore.search"
+                            v-model="search"
                             type="search"
                             placeholder="Nom du Pokémon"
                             class="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none focus:border-cyan-400 md:w-80"
-                            @input="pokemonStore.setSearch(pokemonStore.search)"
+                            @input="fetchPage(1)"
                         />
                     </div>
-
                     <div class="flex flex-col gap-2">
                         <label for="itemsPerPage" class="text-sm text-slate-300">Pokémon par page</label>
                         <select
                             id="itemsPerPage"
-                            v-model="pokemonStore.itemsPerPage"
+                            v-model="itemsPerPage"
                             class="rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm"
-                            @change="pokemonStore.setItemsPerPage(Number(pokemonStore.itemsPerPage))"
+                            @change="fetchPage(1)"
                         >
                             <option :value="8">8</option>
                             <option :value="12">12</option>
@@ -54,13 +57,13 @@ onMounted(async () => {
                 </div>
 
                 <div class="mt-4">
-                    <TypesGrid />
+                    <TypesGrid :types="types" @filter-by-type="handleFilterByType" />
                 </div>
             </section>
 
-            <section v-if="pokemonStore.allPokemons.length" class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <section v-if="allPokemons.length" class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <PokedexCard
-                    v-for="pokemon in pokemonStore.paginatedPokemons"
+                    v-for="pokemon in allPokemons"
                     :key="pokemon.id"
                     :pokemon="pokemon"
                 />
@@ -70,23 +73,23 @@ onMounted(async () => {
                 Chargement des Pokémon...
             </p>
 
-            <footer v-if="pokemonStore.allPokemons.length" class="flex flex-col gap-3 rounded-2xl border border-slate-800 bg-slate-900/70 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <footer v-if="total > 0" class="flex flex-col gap-3 rounded-2xl border border-slate-800 bg-slate-900/70 p-4 sm:flex-row sm:items-center sm:justify-between">
                 <button
                     class="rounded-lg border border-slate-700 px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
-                    :disabled="pokemonStore.currentPage === 1"
-                    @click="pokemonStore.previousPage()"
+                    :disabled="currentPage === 1"
+                    @click="previousPage"
                 >
                     Précédent
                 </button>
 
                 <span class="text-sm text-slate-300">
-                    Page {{ pokemonStore.currentPage }} / {{ pokemonStore.totalPages }}
+                    Page {{ currentPage }} / {{ totalPages }}
                 </span>
 
                 <button
                     class="rounded-lg border border-slate-700 px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
-                    :disabled="pokemonStore.currentPage === pokemonStore.totalPages"
-                    @click="pokemonStore.nextPage()"
+                    :disabled="currentPage === totalPages"
+                    @click="nextPage"
                 >
                     Suivant
                 </button>
