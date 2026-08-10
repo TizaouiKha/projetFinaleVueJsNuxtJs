@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import type { Pokemon } from '../types/pokemon'
+import { useTeamStore } from '../stores/team'
 
 const props = defineProps<{
   pokemon: Pokemon
   beforeEvolution?: string
   afterEvolution?: string
 }>()
+
+const teamStore = useTeamStore()
 </script>
 
 <template>
@@ -22,13 +25,23 @@ const props = defineProps<{
           </p>
         </div>
 
-        <div class="flex flex-wrap gap-2">
-          <span
-            v-for="type in props.pokemon.types"
-            class="rounded-full border border-white/40 bg-white/20 px-3 py-1 text-sm font-semibold uppercase tracking-wide backdrop-blur"
+        <div class="flex flex-col items-start gap-3 sm:items-end">
+          <div class="flex flex-wrap gap-2">
+            <span
+              v-for="type in props.pokemon.types"
+              class="rounded-full border border-white/40 bg-white/20 px-3 py-1 text-sm font-semibold uppercase tracking-wide backdrop-blur"
+            >
+              {{ type }}
+            </span>
+          </div>
+
+          <button
+            class="rounded-full border border-white/40 bg-black/30 px-4 py-2 text-sm font-semibold text-white backdrop-blur transition hover:bg-black/50 disabled:cursor-not-allowed disabled:opacity-40"
+            :disabled="!teamStore.isInTeam(props.pokemon.id) && teamStore.isFull"
+            @click="teamStore.toggleInTeam(props.pokemon)"
           >
-            {{ type }}
-          </span>
+            {{ teamStore.isInTeam(props.pokemon.id) ? '★ Dans l\'équipe' : '☆ Ajouter à l\'équipe' }}
+          </button>
         </div>
       </div>
     </div>
