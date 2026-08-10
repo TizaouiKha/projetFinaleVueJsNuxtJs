@@ -4,11 +4,10 @@ import { usePokemonEvolutions } from '@/composables/usePokemonEvolutions'
 import type { Pokemon } from '@/types/pokemon'
 
 const route = useRoute()
-const { beforeEvolution, afterEvolution, getPokemonEvolutions } = usePokemonEvolutions()
+const { beforeEvolution, afterEvolution, getPokemonEvolutions, getMoves, moves } = usePokemonEvolutions()
 
 const selectedPokemon = ref<Pokemon | null>(null)
 const loadingPokemon = ref(false)
-const speciesData = ref<any>(null)
 const cryAutoplayFailed = ref(false)
 const cryAttempted = ref(false)
 
@@ -26,6 +25,7 @@ const fetchPokemon = async (name: string) => {
       selectedPokemon.value = await res.json()
       if (selectedPokemon.value?.id) {
         await getPokemonEvolutions(selectedPokemon.value.id)
+        await getMoves(selectedPokemon.value.name)
         tryPlayCry()
       }
     }
@@ -69,26 +69,11 @@ const tryPlayCry = async () => {
   }
 }
 
-const pokemonEvolutions = async () => {
-  try {
-    const res = await fetch(`https://pokeapi.co/api/v2/evolution-chain/${selectedPokemon.value?.id}`);
-    if (!res.ok) {
-      console.error('Failed to fetch Pokemon species data');
-      return;
-    }
-    speciesData.value = await res.json();
-    console.log('Species Data:', speciesData.value);
-  } catch (e) {
-    console.error('Error fetching Pokemon species data:', e); 
-  }
-}
-
 watch(
   () => route.params.name,
   async (newName) => {
     if (typeof newName === 'string') {
       await fetchPokemon(newName)
-      await pokemonEvolutions()
     }
   },
   { immediate: true }

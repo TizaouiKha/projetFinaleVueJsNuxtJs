@@ -3,6 +3,7 @@ import { ref } from 'vue'
 export function usePokemonEvolutions() {
     const beforeEvolution = ref<string | null>('')
     const afterEvolution = ref<string | null>('')
+    const moves = ref<any[]>([])
 
     const getPokemonEvolutions = async (pokemonId: number) => {
         beforeEvolution.value = ''
@@ -44,9 +45,21 @@ export function usePokemonEvolutions() {
         return evolutions
     }
 
+    const getMoves = async (pokemonName: string) => {
+        moves.value = []
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`)
+        const data = await response.json()
+
+        moves.value = data.moves.map((move: any) => move.move.name)
+    }
+
+
+
     return {
         beforeEvolution,
         afterEvolution,
-        getPokemonEvolutions
+        moves,
+        getPokemonEvolutions,
+        getMoves
     }
 }
