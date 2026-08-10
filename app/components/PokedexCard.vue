@@ -34,7 +34,7 @@ const props = defineProps<{
             </h3>
 
             <ul class="flex flex-wrap gap-2">
-                <li v-for="type in props.pokemon.types" :key="type.name">
+                <li v-for="type in props.pokemon.types">
                     <TypeTag :type="type" />
                 </li>
             </ul>

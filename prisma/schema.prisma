@@ -16,6 +16,7 @@ model Pokemon {
   image  String?    // nullable
   height Int?       // nullable
   weight Int?       // nullable
+  cry    String?    // nullable
   types  String[]    // array de chaînes (non nullable)
 }
 

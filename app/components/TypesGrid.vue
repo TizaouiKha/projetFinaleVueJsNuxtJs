@@ -5,10 +5,12 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     (e: 'filterByType', type: string | null): void
+    (e: 'redirect', type: string): void
 }>()
 
 const setType = (type: string | null) => {
     emit('filterByType', type)
+    emit('redirect', type ?? '')
 }
 </script>
 

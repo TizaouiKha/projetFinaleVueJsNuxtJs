@@ -47,6 +47,7 @@ async function main() {
         height: details.height,
         weight: details.weight,
         types: details.types,
+        cry: details.cry,
       },
     })
 
@@ -76,6 +77,7 @@ async function pokemonDetails(pokemonName: string) {
       details.sprites.other.showdown.front_default ??
       details.sprites.front_default ??
       null,
+    cry: details.cries.latest ?? null,
     types: details.types
       .map((t: any) => t?.type?.name)
       .filter((t: unknown): t is string => typeof t === "string"),

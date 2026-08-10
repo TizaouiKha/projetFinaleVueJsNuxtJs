@@ -9,15 +9,20 @@ export function usePokemon() {
     const currentPage = ref(1)
     const total = ref(0)
     const search = ref('')
+    const selectedType = ref<string | null>(null)
 
-    const fetchPage = async (page = 1, type?: string) => {
+    const fetchPage = async (page = 1, type?: string | null) => {
         try {
+            if (type !== undefined) {
+                selectedType.value = type
+            }
+
             const limit = itemsPerPage.value
             const offset = Math.max(0, (page - 1) * limit)
             const params = new URLSearchParams()
             params.set('limit', String(limit))
             params.set('offset', String(offset))
-            if (type) params.set('type', type)
+            if (selectedType.value) params.set('type', selectedType.value)
             if (search.value) params.set('search', search.value)
 
             const response = await fetch(`/api/pokemon?${params.toString()}`)
@@ -52,7 +57,7 @@ export function usePokemon() {
         }
     }
 
-    const fetchPokemonsByType = async (type: string) => {
+    const fetchPokemonsByType = async (type: string | null) => {
         await fetchPage(1, type)
     }
 
