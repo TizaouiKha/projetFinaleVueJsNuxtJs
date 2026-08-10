@@ -13,6 +13,7 @@ datasource db {
 model Pokemon {
   id     Int   @id
   name   String   @unique
+  nameFr String?    // nom officiel français, nullable
   image  String?    // nullable
   height Int?       // nullable
   weight Int?       // nullable

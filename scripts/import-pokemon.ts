@@ -33,16 +33,26 @@ async function main() {
     })
 
     if (existing) {
-      console.log(`⏭️ ${pokemon.name} existe déjà`)
+      if (!existing.nameFr) {
+        const nameFr = await fetchNameFr(existing.name)
+        if (nameFr) {
+          await prisma.pokemon.update({ where: { id: existing.id }, data: { nameFr } })
+          console.log(`🇫🇷 ${existing.name} -> ${nameFr}`)
+        }
+      } else {
+        console.log(`⏭️ ${pokemon.name} existe déjà`)
+      }
       continue
     }
 
     const details = await pokemonDetails(pokemon.name)
+    const nameFr = await fetchNameFr(details.name)
 
     await prisma.pokemon.create({
       data: {
         id: index + 1,
         name: details.name,
+        nameFr,
         image: details.image,
         height: details.height,
         weight: details.weight,
@@ -55,6 +65,23 @@ async function main() {
   }
 
   console.log("🎉 Import terminé !")
+}
+
+async function fetchNameFr(pokemonName: string): Promise<string | null> {
+  let speciesResponse = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemonName}`)
+
+  if (!speciesResponse.ok) {
+    const pokemonResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`)
+    if (!pokemonResponse.ok) return null
+    const pokemonData = await pokemonResponse.json()
+    speciesResponse = await fetch(pokemonData.species.url)
+    if (!speciesResponse.ok) return null
+  }
+
+  const speciesData = await speciesResponse.json()
+  const frenchName = speciesData.names?.find((n: any) => n.language?.name === "fr")?.name
+
+  return frenchName ?? null
 }
 
 async function pokemonDetails(pokemonName: string) {
