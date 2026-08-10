@@ -33,12 +33,30 @@ async function main() {
     })
 
     if (existing) {
-      if (!existing.nameFr) {
+      const needsNameFr = !existing.nameFr
+      const needsStats = existing.hp == null
+      const updateData: Record<string, unknown> = {}
+
+      if (needsNameFr) {
         const nameFr = await fetchNameFr(existing.name)
-        if (nameFr) {
-          await prisma.pokemon.update({ where: { id: existing.id }, data: { nameFr } })
-          console.log(`🇫🇷 ${existing.name} -> ${nameFr}`)
-        }
+        if (nameFr) updateData.nameFr = nameFr
+      }
+
+      if (needsStats) {
+        const details = await pokemonDetails(existing.name)
+        Object.assign(updateData, {
+          hp: details.hp,
+          attack: details.attack,
+          defense: details.defense,
+          specialAttack: details.specialAttack,
+          specialDefense: details.specialDefense,
+          speed: details.speed,
+        })
+      }
+
+      if (Object.keys(updateData).length > 0) {
+        await prisma.pokemon.update({ where: { id: existing.id }, data: updateData })
+        console.log(`🔄 ${existing.name} mis à jour`)
       } else {
         console.log(`⏭️ ${pokemon.name} existe déjà`)
       }
@@ -58,6 +76,12 @@ async function main() {
         weight: details.weight,
         types: details.types,
         cry: details.cry,
+        hp: details.hp,
+        attack: details.attack,
+        defense: details.defense,
+        specialAttack: details.specialAttack,
+        specialDefense: details.specialDefense,
+        speed: details.speed,
       },
     })
 
@@ -95,6 +119,9 @@ async function pokemonDetails(pokemonName: string) {
 
   const details = await response.json()
 
+  const baseStat = (statName: string): number | null =>
+    details.stats.find((s: any) => s?.stat?.name === statName)?.base_stat ?? null
+
   return {
     id: details.id,
     name: details.name,
@@ -108,6 +135,12 @@ async function pokemonDetails(pokemonName: string) {
     types: details.types
       .map((t: any) => t?.type?.name)
       .filter((t: unknown): t is string => typeof t === "string"),
+    hp: baseStat("hp"),
+    attack: baseStat("attack"),
+    defense: baseStat("defense"),
+    specialAttack: baseStat("special-attack"),
+    specialDefense: baseStat("special-defense"),
+    speed: baseStat("speed"),
   }
 }
 

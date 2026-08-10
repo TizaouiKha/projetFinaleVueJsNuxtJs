@@ -8,4 +8,10 @@ export interface Pokemon {
     weight: number
     image?: string
     types?: PokemonType[]
+    hp?: number | null
+    attack?: number | null
+    defense?: number | null
+    specialAttack?: number | null
+    specialDefense?: number | null
+    speed?: number | null
 }

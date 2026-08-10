@@ -23,6 +23,13 @@ const { locale, toggleLocale, t } = useLocale()
         </button>
 
         <NuxtLink
+          to="/duel"
+          class="rounded-full border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:bg-slate-800"
+        >
+          {{ t('nav_duel') }}
+        </NuxtLink>
+
+        <NuxtLink
           to="/team"
           class="rounded-full border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:bg-slate-800"
         >

@@ -11,14 +11,20 @@ datasource db {
 }
 
 model Pokemon {
-  id     Int   @id
-  name   String   @unique
-  nameFr String?    // nom officiel français, nullable
-  image  String?    // nullable
-  height Int?       // nullable
-  weight Int?       // nullable
-  cry    String?    // nullable
-  types  String[]    // array de chaînes (non nullable)
+  id             Int      @id
+  name           String   @unique
+  nameFr         String?    // nom officiel français, nullable
+  image          String?    // nullable
+  height         Int?       // nullable
+  weight         Int?       // nullable
+  cry            String?    // nullable
+  types          String[]    // array de chaînes (non nullable)
+  hp             Int?       // stats de base, nullable
+  attack         Int?
+  defense        Int?
+  specialAttack  Int?
+  specialDefense Int?
+  speed          Int?
 }
 
 model User {
