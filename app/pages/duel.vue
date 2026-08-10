@@ -5,6 +5,9 @@ import { useDuelStore } from '~/stores/duel'
 import type { Pokemon } from '~/types/pokemon'
 import DuelCard from '~/components/DuelCard.vue'
 
+const STAT_KEYS = ['hp', 'attack', 'defense', 'specialAttack', 'specialDefense', 'speed']
+const TOTAL_JOKERS = 4
+
 const { t } = useLocale()
 const duelStore = useDuelStore()
 
@@ -12,6 +15,9 @@ const combatants = ref<Pokemon[]>([])
 const loading = ref(false)
 const pickedId = ref<number | null>(null)
 const revealed = ref(false)
+const jokersRemaining = ref(TOTAL_JOKERS)
+const visibleStatsA = ref<string[]>([])
+const visibleStatsB = ref<string[]>([])
 
 const totalStats = (p: Pokemon) =>
     (p.hp ?? 0) + (p.attack ?? 0) + (p.defense ?? 0) + (p.specialAttack ?? 0) + (p.specialDefense ?? 0) + (p.speed ?? 0)
@@ -31,12 +37,25 @@ const loadDuel = async () => {
     loading.value = true
     pickedId.value = null
     revealed.value = false
+    jokersRemaining.value = TOTAL_JOKERS
+    visibleStatsA.value = []
+    visibleStatsB.value = []
     try {
         const res = await fetch('/api/pokemon/random?count=2')
         combatants.value = await res.json()
     } finally {
         loading.value = false
     }
+}
+
+const useJoker = (visibleStats: string[]) => {
+    if (jokersRemaining.value <= 0) return
+    const hidden = STAT_KEYS.filter((key) => !visibleStats.includes(key))
+    if (hidden.length === 0) return
+
+    hidden.sort(() => Math.random() - 0.5)
+    visibleStats.push(...hidden.slice(0, 2))
+    jokersRemaining.value -= 1
 }
 
 const pick = (pokemon: Pokemon) => {
@@ -63,6 +82,7 @@ onMounted(loadDuel)
                 </div>
                 <div class="flex flex-col items-start gap-2 sm:items-end">
                     <p class="text-sm text-slate-300">{{ t('duel_score', duelStore.wins, duelStore.total, duelStore.accuracy) }}</p>
+                    <p v-if="!revealed" class="text-xs text-slate-400">{{ t('duel_jokers_remaining', jokersRemaining) }}</p>
                     <button
                         class="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-400 transition hover:bg-slate-800"
                         @click="duelStore.resetScore()"
@@ -83,7 +103,10 @@ onMounted(loadDuel)
                     :revealed="revealed"
                     :is-winner="revealed && winnerId === combatants[0].id"
                     :is-picked="pickedId === combatants[0].id"
+                    :visible-stats="visibleStatsA"
+                    :jokers-remaining="jokersRemaining"
                     @pick="pick(combatants[0])"
+                    @use-joker="useJoker(visibleStatsA)"
                 />
 
                 <p class="text-center text-2xl font-black text-slate-600">{{ t('duel_vs') }}</p>
@@ -94,7 +117,10 @@ onMounted(loadDuel)
                     :revealed="revealed"
                     :is-winner="revealed && winnerId === combatants[1].id"
                     :is-picked="pickedId === combatants[1].id"
+                    :visible-stats="visibleStatsB"
+                    :jokers-remaining="jokersRemaining"
                     @pick="pick(combatants[1])"
+                    @use-joker="useJoker(visibleStatsB)"
                 />
             </div>
 
