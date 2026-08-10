@@ -15,18 +15,27 @@ export default defineEventHandler(async (event) => {
 
   const search = rawSearch ? String(rawSearch).trim() : undefined
 
+  const nameSearch = search
+    ? {
+        OR: [
+          { name: { contains: search, mode: 'insensitive' } },
+          { nameFr: { contains: search, mode: 'insensitive' } },
+        ],
+      }
+    : undefined
+
   let where: any = undefined
   if (type && search) {
     where = {
       AND: [
         { types: { has: String(type) } },
-        { name: { contains: search, mode: 'insensitive' } },
+        nameSearch,
       ],
     }
   } else if (type) {
     where = { types: { has: String(type) } }
   } else if (search) {
-    where = { name: { contains: search, mode: 'insensitive' } }
+    where = nameSearch
   }
 
   const [data, total] = await Promise.all([

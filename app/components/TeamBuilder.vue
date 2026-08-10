@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { MAX_TEAM_SIZE, useTeamStore } from '../stores/team'
+import { useLocale } from '../composables/useLocale'
 import TeamSlot from './TeamSlot.vue'
 
 const teamStore = useTeamStore()
+const { t } = useLocale()
 
 const slots = computed(() => {
     const filled = teamStore.team
@@ -16,9 +18,9 @@ const slots = computed(() => {
     <section class="space-y-6">
         <header class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div class="space-y-1">
-                <p class="text-sm uppercase tracking-[0.3em] text-slate-400">Composition d'équipe</p>
-                <h1 class="text-3xl font-bold">Mon équipe</h1>
-                <p class="text-slate-400">{{ teamStore.teamCount }} / {{ MAX_TEAM_SIZE }} Pokémon</p>
+                <p class="text-sm uppercase tracking-[0.3em] text-slate-400">{{ t('team_building') }}</p>
+                <h1 class="text-3xl font-bold">{{ t('my_team') }}</h1>
+                <p class="text-slate-400">{{ t('pokemon_count', teamStore.teamCount, MAX_TEAM_SIZE) }}</p>
             </div>
 
             <button
@@ -26,7 +28,7 @@ const slots = computed(() => {
                 :disabled="teamStore.teamCount === 0"
                 @click="teamStore.clearTeam()"
             >
-                Vider l'équipe
+                {{ t('empty_team') }}
             </button>
         </header>
 

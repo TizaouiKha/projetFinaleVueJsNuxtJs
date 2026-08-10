@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Pokemon } from '../types/pokemon'
 import { useTeamStore } from '../stores/team'
+import { useLocale } from '../composables/useLocale'
 
 const props = defineProps<{
   pokemon: Pokemon
@@ -9,6 +10,7 @@ const props = defineProps<{
 }>()
 
 const teamStore = useTeamStore()
+const { t, pokemonName, typeName } = useLocale()
 </script>
 
 <template>
@@ -18,7 +20,7 @@ const teamStore = useTeamStore()
         <div class="space-y-3">
           <p class="text-sm uppercase tracking-[0.3em] text-slate-900/80">Pokédex</p>
           <h2 class="text-3xl font-black capitalize sm:text-4xl">
-            {{ props.pokemon.name }}
+            {{ pokemonName(props.pokemon) }}
           </h2>
           <p class="text-sm font-semibold text-slate-900/80">
             N° {{ props.pokemon.id }}
@@ -31,7 +33,7 @@ const teamStore = useTeamStore()
               v-for="type in props.pokemon.types"
               class="rounded-full border border-white/40 bg-white/20 px-3 py-1 text-sm font-semibold uppercase tracking-wide backdrop-blur"
             >
-              {{ type }}
+              {{ typeName(type) }}
             </span>
           </div>
 
@@ -40,7 +42,7 @@ const teamStore = useTeamStore()
             :disabled="!teamStore.isInTeam(props.pokemon.id) && teamStore.isFull"
             @click="teamStore.toggleInTeam(props.pokemon)"
           >
-            {{ teamStore.isInTeam(props.pokemon.id) ? '★ Dans l\'équipe' : '☆ Ajouter à l\'équipe' }}
+            {{ teamStore.isInTeam(props.pokemon.id) ? t('in_team') : t('add_to_team') }}
           </button>
         </div>
       </div>
@@ -60,32 +62,32 @@ const teamStore = useTeamStore()
       <div class="space-y-4 rounded-2xl border border-slate-800 bg-slate-950/70 p-5">
         <div class="grid gap-4 sm:grid-cols-2">
           <div class="rounded-xl border border-slate-800 bg-slate-900/80 p-4">
-            <p class="text-sm text-slate-400">Taille</p>
+            <p class="text-sm text-slate-400">{{ t('size') }}</p>
             <p class="mt-1 text-xl font-semibold">{{ props.pokemon.height }}</p>
           </div>
           <div class="rounded-xl border border-slate-800 bg-slate-900/80 p-4">
-            <p class="text-sm text-slate-400">Poids</p>
+            <p class="text-sm text-slate-400">{{ t('weight') }}</p>
             <p class="mt-1 text-xl font-semibold">{{ props.pokemon.weight }}</p>
           </div>
         </div>
 
         <div class="rounded-xl border border-slate-800 bg-slate-900/80 p-4">
-          <p class="mb-2 text-sm text-slate-400">Types</p>
+          <p class="mb-2 text-sm text-slate-400">{{ t('types_label') }}</p>
           <div class="flex flex-wrap gap-2">
             <span
               v-for="type in props.pokemon.types"
               class="rounded-full bg-slate-800 px-3 py-1 text-sm font-medium"
             >
-              {{ type }}
+              {{ typeName(type) }}
             </span>
           </div>
         </div>
 
         <div class="rounded-xl border border-slate-800 bg-slate-900/80 p-4">
-          <p class="mb-2 text-sm text-slate-400">Évolution</p>
+          <p class="mb-2 text-sm text-slate-400">{{ t('evolution') }}</p>
           <div class="grid gap-4 sm:grid-cols-2">
             <div class="rounded-xl bg-slate-950 p-4 text-center">
-              <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Avant</p>
+              <p class="text-xs uppercase tracking-[0.2em] text-slate-500">{{ t('before') }}</p>
               <div class="mt-2">
                 <NuxtLink
                   v-if="props.beforeEvolution && props.beforeEvolution.toLowerCase() !== 'aucune'"
@@ -95,12 +97,12 @@ const teamStore = useTeamStore()
                   {{ props.beforeEvolution }}
                 </NuxtLink>
                 <p v-else class="block text-lg font-semibold capitalize text-cyan-400">
-                  Aucune
+                  {{ t('none') }}
                 </p>
               </div>
             </div>
             <div class="rounded-xl bg-slate-950 p-4 text-center">
-              <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Après</p>
+              <p class="text-xs uppercase tracking-[0.2em] text-slate-500">{{ t('after') }}</p>
               <div class="mt-2">
                 <NuxtLink
                   v-if="props.afterEvolution && props.afterEvolution.toLowerCase() !== 'aucune'"
@@ -110,7 +112,7 @@ const teamStore = useTeamStore()
                   {{ props.afterEvolution }}
                 </NuxtLink>
                 <p v-else class="block text-lg font-semibold capitalize text-cyan-400">
-                  Aucune
+                  {{ t('none') }}
                 </p>
               </div>
             </div>
