@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import PokemonList from '~/components/PokemonList.vue'
+
 const props = defineProps<{
   details: any
   typeName: string
@@ -33,6 +35,16 @@ const props = defineProps<{
         <p class="mt-2 text-sm text-slate-400">
           Nombre de pokémons référencés dans l’API : {{ details.pokemon.length }}
         </p>
+      </div>
+
+      <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 shadow-lg">
+        <PokemonList
+          :initialType="typeName"
+          :showTypeFilter="false"
+          :showSearch="false"
+          title="Pokémons de ce type"
+          description="Liste des Pokémons associés à ce type."
+        />
       </div>
     </div>
   </div>
