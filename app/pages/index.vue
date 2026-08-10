@@ -10,11 +10,8 @@ onMounted(async () => {
 })
 
 const handleFilterByType = async (type: string | null) => {
-    if (type) {
-        await fetchPokemonsByType(type)
-    } else {
-        await fetchPage(1)
-    }
+    console.log('Filtering by type:', type)
+    await fetchPage(1, type)
 }
 </script>
 

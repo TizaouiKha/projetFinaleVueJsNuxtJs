@@ -3,6 +3,8 @@ import type { Pokemon } from '../types/pokemon'
 
 const props = defineProps<{
   pokemon: Pokemon
+  beforeEvolution?: string
+  afterEvolution?: string
 }>()
 </script>
 
@@ -23,10 +25,9 @@ const props = defineProps<{
         <div class="flex flex-wrap gap-2">
           <span
             v-for="type in props.pokemon.types"
-            :key="type.name"
             class="rounded-full border border-white/40 bg-white/20 px-3 py-1 text-sm font-semibold uppercase tracking-wide backdrop-blur"
           >
-            {{ type.name }}
+            {{ type }}
           </span>
         </div>
       </div>
@@ -60,11 +61,46 @@ const props = defineProps<{
           <div class="flex flex-wrap gap-2">
             <span
               v-for="type in props.pokemon.types"
-              :key="type.name"
               class="rounded-full bg-slate-800 px-3 py-1 text-sm font-medium"
             >
-              {{ type.name }}
+              {{ type }}
             </span>
+          </div>
+        </div>
+
+        <div class="rounded-xl border border-slate-800 bg-slate-900/80 p-4">
+          <p class="mb-2 text-sm text-slate-400">Évolution</p>
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div class="rounded-xl bg-slate-950 p-4 text-center">
+              <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Avant</p>
+              <div class="mt-2">
+                <NuxtLink
+                  v-if="props.beforeEvolution && props.beforeEvolution.toLowerCase() !== 'aucune'"
+                  :to="`/pokemon/${props.beforeEvolution}`"
+                  class="block text-lg font-semibold capitalize text-cyan-400 hover:underline"
+                >
+                  {{ props.beforeEvolution }}
+                </NuxtLink>
+                <p v-else class="block text-lg font-semibold capitalize text-cyan-400">
+                  Aucune
+                </p>
+              </div>
+            </div>
+            <div class="rounded-xl bg-slate-950 p-4 text-center">
+              <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Après</p>
+              <div class="mt-2">
+                <NuxtLink
+                  v-if="props.afterEvolution && props.afterEvolution.toLowerCase() !== 'aucune'"
+                  :to="`/pokemon/${props.afterEvolution}`"
+                  class="block text-lg font-semibold capitalize text-cyan-400 hover:underline"
+                >
+                  {{ props.afterEvolution }}
+                </NuxtLink>
+                <p v-else class="block text-lg font-semibold capitalize text-cyan-400">
+                  Aucune
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const props = defineProps<{
-    type: { name: string, url: string }
+    type?: string
 }>();
 
 import { pokemonTypeColors } from "~/utils/pokemonTypeColors";
