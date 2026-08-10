@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 import { usePokemon } from '~/composables/usePokemon'
+import { useLocale } from '~/composables/useLocale'
 import TypesGrid from '~/components/TypesGrid.vue'
 import PokedexCard from '~/components/PokedexCard.vue'
 
@@ -49,6 +50,8 @@ const {
   previousPage,
 } = usePokemon()
 
+const { t } = useLocale()
+
 const loading = ref(false)
 
 const loadPage = async (page = 1, type?: string | null) => {
@@ -82,7 +85,7 @@ onMounted(async () => {
 <template>
   <section class="space-y-6">
     <header class="space-y-2">
-      <p class="text-sm uppercase tracking-[0.3em] text-slate-400">Pokédex</p>
+      <p class="text-sm uppercase tracking-[0.3em] text-slate-400">{{ t('nav_pokedex') }}</p>
       <h1 class="text-3xl font-bold">{{ title }}</h1>
       <p class="text-slate-400">{{ description }}</p>
     </header>
@@ -90,19 +93,19 @@ onMounted(async () => {
     <section class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 shadow-lg">
       <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div v-if="props.showSearch" class="flex flex-col gap-2">
-          <label for="search" class="text-sm text-slate-300">Rechercher</label>
+          <label for="search" class="text-sm text-slate-300">{{ t('search_label') }}</label>
           <input
             id="search"
             v-model="search"
             type="search"
-            placeholder="Nom du Pokémon"
+            :placeholder="t('search_placeholder')"
             class="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none focus:border-cyan-400 md:w-80"
             @input="loadPage(1)"
           />
         </div>
 
         <div v-if="props.showItemsPerPage" class="flex flex-col gap-2">
-          <label for="itemsPerPage" class="text-sm text-slate-300">Pokémon par page</label>
+          <label for="itemsPerPage" class="text-sm text-slate-300">{{ t('items_per_page_label') }}</label>
           <select
             id="itemsPerPage"
             v-model="itemsPerPage"
@@ -131,11 +134,11 @@ onMounted(async () => {
     </section>
 
     <div v-if="loading && !allPokemons.length" class="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 text-center text-slate-400">
-      Chargement des Pokémon...
+      {{ t('loading_pokemons') }}
     </div>
 
     <div v-else-if="!loading && !allPokemons.length" class="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 text-center text-slate-400">
-      Aucun Pokémon trouvé.
+      {{ t('no_pokemons') }}
     </div>
 
     <footer v-if="props.showPagination && total > 0" class="flex flex-col gap-3 rounded-2xl border border-slate-800 bg-slate-900/70 p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -144,11 +147,11 @@ onMounted(async () => {
         :disabled="currentPage === 1"
         @click="previousPage()"
       >
-        Précédent
+        {{ t('previous') }}
       </button>
 
       <span class="text-sm text-slate-300">
-        Page {{ currentPage }} / {{ totalPages }}
+        {{ t('page_of', currentPage, totalPages) }}
       </span>
 
       <button
@@ -156,7 +159,7 @@ onMounted(async () => {
         :disabled="currentPage === totalPages"
         @click="nextPage()"
       >
-        Suivant
+        {{ t('next') }}
       </button>
     </footer>
   </section>

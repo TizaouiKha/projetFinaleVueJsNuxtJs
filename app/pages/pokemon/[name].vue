@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { usePokemonEvolutions } from '@/composables/usePokemonEvolutions'
+import { useLocale } from '@/composables/useLocale'
 import type { Pokemon } from '@/types/pokemon'
 
 const route = useRoute()
 const { beforeEvolution, afterEvolution, getPokemonEvolutions, getMoves, moves } = usePokemonEvolutions()
+const { t } = useLocale()
 
 const selectedPokemon = ref<Pokemon | null>(null)
 const loadingPokemon = ref(false)
@@ -84,13 +86,13 @@ watch(
   <main class="min-h-screen bg-[radial-gradient(circle_at_top,_#1e293b,_#020617)] p-6 text-white">
     <div v-if="loadingPokemon" class="flex min-h-[60vh] items-center justify-center">
       <div class="rounded-2xl border border-slate-700 bg-slate-900/70 px-6 py-4 text-slate-300">
-        Chargement du Pokémon...
+        {{ t('loading_pokemon') }}
       </div>
     </div>
 
     <div v-else-if="selectedPokemon" class="mx-auto flex max-w-5xl flex-col gap-6">
       <NuxtLink to="/" class="w-fit rounded-full border border-slate-700 bg-slate-900/70 px-4 py-2 text-sm text-slate-300 transition hover:bg-slate-800">
-        ← Retour à la liste
+        {{ t('back_to_list') }}
       </NuxtLink>
 
       <PokemonDetailCard
@@ -99,13 +101,13 @@ watch(
         :after-evolution="afterEvolution"
       />
       <div class="flex items-center gap-3">
-        <p v-if="cryAttempted && cryAutoplayFailed" class="text-sm text-slate-400">Autoplay bloqué</p>
-        <p v-else-if="!cryAttempted" class="text-sm text-slate-400">Le cri se lance automatiquement</p>
+        <p v-if="cryAttempted && cryAutoplayFailed" class="text-sm text-slate-400">{{ t('cry_autoplay_blocked') }}</p>
+        <p v-else-if="!cryAttempted" class="text-sm text-slate-400">{{ t('cry_autoplay_hint') }}</p>
       </div>
     </div>
 
     <p v-else class="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 text-center text-slate-400">
-      Ce Pokémon est introuvable.
+      {{ t('pokemon_not_found') }}
     </p>
   </main>
 </template>

@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import type { Pokemon } from '../types/pokemon'
 import { useTeamStore } from '../stores/team'
+import { useLocale } from '../composables/useLocale'
 
 const props = defineProps<{
     pokemon: Pokemon & { image?: string, types?: { name: string, url: string }[] }
 }>()
 
 const teamStore = useTeamStore()
+const { t, pokemonName, typeName } = useLocale()
 
 const handleToggleTeam = (event: MouseEvent) => {
     event.preventDefault()
@@ -24,7 +26,7 @@ const handleToggleTeam = (event: MouseEvent) => {
             class="absolute right-3 top-3 z-10 rounded-full border border-white/40 bg-black/50 px-2 py-1 text-xs text-white backdrop-blur transition hover:bg-black/80 disabled:cursor-not-allowed disabled:opacity-40"
             :class="{ 'bg-emerald-600/80 border-emerald-400': teamStore.isInTeam(props.pokemon.id) }"
             :disabled="!teamStore.isInTeam(props.pokemon.id) && teamStore.isFull"
-            :title="teamStore.isInTeam(props.pokemon.id) ? 'Retirer de l\'équipe' : 'Ajouter à l\'équipe'"
+            :title="teamStore.isInTeam(props.pokemon.id) ? t('remove_from_team') : t('add_to_team')"
             @click="handleToggleTeam"
         >
             {{ teamStore.isInTeam(props.pokemon.id) ? '★' : '☆' }}
@@ -44,11 +46,11 @@ const handleToggleTeam = (event: MouseEvent) => {
         <div class="space-y-3 p-4">
             <div class="flex items-center justify-between text-sm text-slate-400">
                 <span>N° {{ props.pokemon.id }}</span>
-                <span class="rounded-full bg-slate-800/70 px-2 py-1 text-[10px] uppercase tracking-wide">{{ props.pokemon.types?.[0] }}</span>
+                <span class="rounded-full bg-slate-800/70 px-2 py-1 text-[10px] uppercase tracking-wide">{{ typeName(props.pokemon.types?.[0]) }}</span>
             </div>
 
             <h3 class="text-lg font-bold uppercase tracking-wide text-white">
-                {{ props.pokemon.name }}
+                {{ pokemonName(props.pokemon) }}
             </h3>
 
             <ul class="flex flex-wrap gap-2">
