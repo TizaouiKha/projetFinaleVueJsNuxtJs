@@ -13,12 +13,13 @@ datasource db {
 model Pokemon {
   id     Int   @id
   name   String   @unique
-  nameFr String?    // nom officiel français, nullable
-  image  String?    // nullable
-  height Int?       // nullable
-  weight Int?       // nullable
-  cry    String?    // nullable
-  types  String[]    // array de chaînes (non nullable)
+  nameFr String?
+  image  String?    
+  defaultImage String?
+  height Int?
+  weight Int?
+  cry    String?
+  types  String[]
 }
 
 model User {
@@ -33,4 +34,10 @@ model Types {
   id  String @id @default(cuid())
   name String
   number Int
+}
+
+model Team {
+  id       Int      @id @default(autoincrement())
+  pokemons String[]
+  createdAt DateTime @default(now())
 }
