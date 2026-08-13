@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { usePokemon } from '@/composables/usePokemon'
 import { useTeamStore } from '../stores/team'
 import { useLocale } from '../composables/useLocale'
 
@@ -10,10 +11,25 @@ const emit = defineEmits<{
     (e: 'update:modelValue', value: boolean): void
 }>()
 
+const showTypes = ref(false);
+
+const handleToggleShowItems = () => {
+    if(showTypes.value) {
+        showTypes.value = false;
+    } else {
+        showTypes.value = true;
+    }
+}
+
+const { types, fetchTypes } = usePokemon()
 const teamStore = useTeamStore()
 const { t } = useLocale()
+fetchTypes()
 
-const close = () => emit('update:modelValue', false)
+const close = () => {
+    emit('update:modelValue', false)
+    showTypes.value = false
+}
 </script>
 
 <template>
@@ -49,14 +65,14 @@ const close = () => emit('update:modelValue', false)
                     {{ t('nav_pokedex') }}
                 </NuxtLink>
 
-                <NuxtLink
-                    to="/types"
-                    class="rounded-lg border border-slate-800 px-4 py-3 text-sm text-slate-300 transition hover:bg-slate-800"
-                    active-class="border-slate-700 bg-slate-800 text-white"
-                    @click="close"
-                >
-                    {{ t('nav_types') }}
-                </NuxtLink>
+                <div class="rounded-lg border border-slate-800 px-4 py-3 text-sm text-slate-300 transition hover:bg-slate-800">
+                    <span @click="handleToggleShowItems">{{ t('nav_types') }}</span>
+                    <ul v-if="showTypes" class="grid grid-cols-2 gap-4 mt-6">
+                        <li v-for="(item, index) in types" :key="index">
+                            <TypeTag :type="item.name" @click="close"/>
+                        </li>
+                    </ul>
+                </div>
 
                 <NuxtLink
                     to="/team"

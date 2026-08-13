@@ -34,6 +34,10 @@ const props = defineProps({
     type: String,
     default: 'Recherchez, filtrez par type et naviguez dans la liste.',
   },
+  isTypePage: {
+    type: Boolean,
+    default: false,
+  }
 })
 
 const {
@@ -85,8 +89,8 @@ onMounted(async () => {
 <template>
   <section class="space-y-6">
     <header class="space-y-2">
-      <p class="text-sm uppercase tracking-[0.3em] text-slate-400">{{ t('nav_pokedex') }}</p>
-      <h1 class="text-3xl font-bold">{{ title }}</h1>
+      <h1 v-if="!props.isTypePage" class="text-3xl font-bold" >{{ title }}</h1>
+      <h2 v-else class="text-2xl font bold" >{{ title }}</h2>
       <p class="text-slate-400">{{ description }}</p>
     </header>
 
