@@ -1,5 +1,14 @@
 import type { PokemonType } from './pokemonType'
 
+export interface PokemonMove {
+    name: string
+    nameFr: string | null
+    type: string
+    power: number
+    accuracy: number | null
+    damageClass: string
+}
+
 export interface Pokemon {
     id: number
     name: string
@@ -15,4 +24,5 @@ export interface Pokemon {
     specialAttack?: number | null
     specialDefense?: number | null
     speed?: number | null
+    moves?: PokemonMove[] | null
 }

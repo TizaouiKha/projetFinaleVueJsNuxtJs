@@ -75,6 +75,15 @@ const close = () => emit('update:modelValue', false)
                 >
                     {{ t('nav_team', teamStore.teamCount) }}
                 </NuxtLink>
+
+                <NuxtLink
+                    to="/battle"
+                    class="rounded-lg border border-slate-800 px-4 py-3 text-sm text-slate-300 transition hover:bg-slate-800"
+                    active-class="border-slate-700 bg-slate-800 text-white"
+                    @click="close"
+                >
+                    {{ t('nav_battle') }}
+                </NuxtLink>
             </nav>
         </aside>
     </div>
