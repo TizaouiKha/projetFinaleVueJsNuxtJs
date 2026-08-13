@@ -29,12 +29,14 @@ const { t, pokemonName, typeName } = useLocale()
 
         <div class="flex flex-col items-start gap-3 sm:items-end">
           <div class="flex flex-wrap gap-2">
-            <span
+            <NuxtLink
               v-for="type in props.pokemon.types"
-              class="rounded-full border border-white/40 bg-white/20 px-3 py-1 text-sm font-semibold uppercase tracking-wide backdrop-blur"
+              :key="`badge-${type}`"
+              :to="`/types/${type}`"
+              class="rounded-full border border-white/40 bg-white/20 px-3 py-1 text-sm font-semibold uppercase tracking-wide backdrop-blur transition hover:bg-white/30"
             >
               {{ typeName(type) }}
-            </span>
+            </NuxtLink>
           </div>
 
           <button
@@ -74,12 +76,14 @@ const { t, pokemonName, typeName } = useLocale()
         <div class="rounded-xl border border-slate-800 bg-slate-900/80 p-4">
           <p class="mb-2 text-sm text-slate-400">{{ t('types_label') }}</p>
           <div class="flex flex-wrap gap-2">
-            <span
+            <NuxtLink
               v-for="type in props.pokemon.types"
-              class="rounded-full bg-slate-800 px-3 py-1 text-sm font-medium"
+              :key="`list-${type}`"
+              :to="`/types/${type}`"
+              class="rounded-full bg-slate-800 px-3 py-1 text-sm font-medium transition hover:bg-slate-700"
             >
               {{ typeName(type) }}
-            </span>
+            </NuxtLink>
           </div>
         </div>
 
