@@ -72,6 +72,7 @@ async function main() {
         name: details.name,
         nameFr,
         image: details.image,
+        defaultImage: details.defaultImage,
         height: details.height,
         weight: details.weight,
         types: details.types,
@@ -84,7 +85,6 @@ async function main() {
         speed: details.speed,
       },
     })
-
     console.log(`✅ ${pokemon.name} importé`)
   }
 
@@ -131,6 +131,7 @@ async function pokemonDetails(pokemonName: string) {
       details.sprites.other.showdown.front_default ??
       details.sprites.front_default ??
       null,
+    defaultImage: details.sprites.front_default ?? null,
     cry: details.cries.latest ?? null,
     types: details.types
       .map((t: any) => t?.type?.name)

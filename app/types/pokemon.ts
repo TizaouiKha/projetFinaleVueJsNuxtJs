@@ -7,6 +7,7 @@ export interface Pokemon {
     height: number
     weight: number
     image?: string
+    defaultImage?: string
     types?: PokemonType[]
     hp?: number | null
     attack?: number | null

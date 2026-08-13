@@ -40,3 +40,9 @@ model Types {
   name String
   number Int
 }
+
+model Team {
+  id       Int      @id @default(autoincrement())
+  pokemons String[]
+  createdAt DateTime @default(now())
+}

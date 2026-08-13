@@ -2,7 +2,9 @@
 import { computed } from 'vue'
 import { MAX_TEAM_SIZE, useTeamStore } from '../stores/team'
 import { useLocale } from '../composables/useLocale'
+import { useTeam } from '../composables/useTeam'
 import TeamSlot from './TeamSlot.vue'
+import TeamsDatatable from './TeamsDatatable.vue'
 
 const teamStore = useTeamStore()
 const { t } = useLocale()
@@ -12,6 +14,23 @@ const slots = computed(() => {
     const empty = Array.from({ length: Math.max(0, MAX_TEAM_SIZE - filled.length) })
     return [...filled, ...empty]
 })
+
+const { allTeams, fetchTeams, saveTeam, saveMessage,saving } = useTeam();
+
+onMounted( async () => {
+   await fetchTeams();
+});
+
+const createTeam = async () => {
+    try {
+        await saveTeam(teamStore.team);
+        teamStore.clearTeam();
+    } catch (error) {
+        console.error("Erreur lors de la création de l'équipe :", error);
+    }
+};
+
+
 </script>
 
 <template>
@@ -23,14 +42,26 @@ const slots = computed(() => {
                 <p class="text-slate-400">{{ t('pokemon_count', teamStore.teamCount, MAX_TEAM_SIZE) }}</p>
             </div>
 
-            <button
-                class="w-fit rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
-                :disabled="teamStore.teamCount === 0"
-                @click="teamStore.clearTeam()"
-            >
-                {{ t('empty_team') }}
-            </button>
+            <div class="flex flex-wrap gap-2">
+                <button
+                    class="w-fit rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+                    :disabled="teamStore.teamCount === 0"
+                    @click="teamStore.clearTeam()"
+                >
+                    {{ t('empty_team') }}
+                </button>
+                <button
+                    class="w-fit rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-2 text-sm text-slate-300 transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+                    :disabled="teamStore.teamCount === 0 || teamStore.saving"
+                    @click="createTeam"
+                >
+                    {{ saving ? 'Enregistrement …' : 'Sauvegarder la team' }}
+                </button>
+            </div>
         </header>
+        <p v-if="saveMessage" class="text-sm text-slate-400">
+            {{ saveMessage }}
+        </p>
 
         <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
             <TeamSlot
@@ -40,5 +71,11 @@ const slots = computed(() => {
                 @remove="teamStore.removeFromTeam"
             />
         </div>
+        <div class="mt-6">
+            <TeamsDatatable :teams="allTeams" />
+        </div>
+
+
+
     </section>
 </template>
