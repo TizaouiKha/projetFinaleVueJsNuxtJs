@@ -33,7 +33,7 @@ export function useTeam() {
         }
     };
 
-    const saveTeam = async (team: Pokemon[]) => {
+    const saveTeam = async (team: Pokemon[], name?: string) => {
         if (team.length === 0) {
             saveMessage.value = t('team_save_empty');
             return false;
@@ -47,6 +47,7 @@ export function useTeam() {
                 method: 'POST',
                 body: {
                     pokemons: team.map((pokemon) => String(pokemon.name)),
+                    name: name || undefined,
                 },
             }) as { success?: boolean; error?: string };
 
@@ -61,6 +62,41 @@ export function useTeam() {
         } catch (err) {
             console.error(err);
             saveMessage.value = t('team_save_error');
+            return false;
+        } finally {
+            saving.value = false;
+        }
+    };
+
+    const updateTeam = async (teamId: number, team: Pokemon[], name?: string) => {
+        if (team.length === 0) {
+            saveMessage.value = t('team_save_empty');
+            return false;
+        }
+
+        saving.value = true;
+        saveMessage.value = '';
+
+        try {
+            const result = await $fetch(`/api/team/${teamId}`, {
+                method: 'PATCH',
+                body: {
+                    pokemons: team.map((pokemon) => String(pokemon.name)),
+                    name: name || null,
+                },
+            }) as { success?: boolean; error?: string };
+
+            if (result?.success) {
+                saveMessage.value = t('team_update_success');
+                await fetchTeams();
+                return true;
+            }
+
+            saveMessage.value = result?.error ?? t('team_update_error');
+            return false;
+        } catch (err) {
+            console.error(err);
+            saveMessage.value = t('team_update_error');
             return false;
         } finally {
             saving.value = false;
@@ -85,6 +121,7 @@ export function useTeam() {
         allTeams,
         fetchTeams,
         saveTeam,
+        updateTeam,
         deleteTeam,
         saveMessage,
         deleteMessage,

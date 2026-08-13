@@ -9,6 +9,10 @@ const props = defineProps<{
     teams: Team[]
 }>()
 
+const emit = defineEmits<{
+    (e: 'edit', team: Team): void
+}>()
+
 const { deleteTeam, deleteMessage, loading } = useTeam()
 const { t, pokemonName } = useLocale()
 
@@ -69,7 +73,7 @@ const onImageError = (event: Event, pokemon: Pokemon) => {
             >
                 <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
                     <div>
-                        <p class="font-semibold text-slate-200">{{ t('team_number', team.id) }}</p>
+                        <p class="font-semibold text-slate-200">{{ team.name || t('team_number', team.id) }}</p>
                         <p v-if="team.createdAt" class="text-xs text-slate-500">{{ t('team_saved_on', formatDate(team.createdAt)) }}</p>
                     </div>
 
@@ -91,14 +95,22 @@ const onImageError = (event: Event, pokemon: Pokemon) => {
                                 {{ t('cancel') }}
                             </button>
                         </template>
-                        <button
-                            v-else
-                            type="button"
-                            class="rounded-lg border border-red-800 px-4 py-2 text-sm font-medium text-red-400 transition hover:bg-red-950"
-                            @click="askDelete(team.id)"
-                        >
-                            {{ t('delete_team') }}
-                        </button>
+                        <template v-else>
+                            <button
+                                type="button"
+                                class="rounded-lg border border-slate-700 px-4 py-2 text-sm font-medium text-slate-300 transition hover:bg-slate-800"
+                                @click="emit('edit', team)"
+                            >
+                                {{ t('edit_team') }}
+                            </button>
+                            <button
+                                type="button"
+                                class="rounded-lg border border-red-800 px-4 py-2 text-sm font-medium text-red-400 transition hover:bg-red-950"
+                                @click="askDelete(team.id)"
+                            >
+                                {{ t('delete_team') }}
+                            </button>
+                        </template>
                     </div>
                 </div>
 
@@ -106,18 +118,23 @@ const onImageError = (event: Event, pokemon: Pokemon) => {
                     <li
                         v-for="pokemon in team.pokemons"
                         :key="pokemon.id"
-                        class="flex w-36 flex-col items-center rounded-xl bg-slate-800 p-3"
+                        class="w-36"
                     >
-                        <img
-                            :src="imageSrc(pokemon)"
-                            :alt="pokemon.name"
-                            class="h-20 w-20 object-contain"
-                            @error="onImageError($event, pokemon)"
-                        />
+                        <NuxtLink
+                            :to="`/pokemon/${pokemon.name}`"
+                            class="flex flex-col items-center rounded-xl bg-slate-800 p-3 transition hover:bg-slate-700"
+                        >
+                            <img
+                                :src="imageSrc(pokemon)"
+                                :alt="pokemon.name"
+                                class="h-20 w-20 object-contain"
+                                @error="onImageError($event, pokemon)"
+                            />
 
-                        <p class="mt-2 text-center text-sm font-medium capitalize text-slate-200">
-                            {{ pokemonName(pokemon) }}
-                        </p>
+                            <p class="mt-2 text-center text-sm font-medium capitalize text-slate-200">
+                                {{ pokemonName(pokemon) }}
+                            </p>
+                        </NuxtLink>
                     </li>
                 </ul>
             </li>

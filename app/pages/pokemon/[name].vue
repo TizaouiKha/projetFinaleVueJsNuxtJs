@@ -5,8 +5,17 @@ import { useLocale } from '@/composables/useLocale'
 import type { Pokemon } from '@/types/pokemon'
 
 const route = useRoute()
+const router = useRouter()
 const { beforeEvolution, afterEvolution, getPokemonEvolutions, getMoves, moves } = usePokemonEvolutions()
 const { t } = useLocale()
+
+const goBack = () => {
+  if (window.history.state?.back) {
+    router.back()
+  } else {
+    router.push('/')
+  }
+}
 
 const selectedPokemon = ref<Pokemon | null>(null)
 const loadingPokemon = ref(false)
@@ -91,9 +100,13 @@ watch(
     </div>
 
     <div v-else-if="selectedPokemon" class="mx-auto flex max-w-5xl flex-col gap-6">
-      <NuxtLink to="/" class="w-fit rounded-full border border-slate-700 bg-slate-900/70 px-4 py-2 text-sm text-slate-300 transition hover:bg-slate-800">
+      <button
+        type="button"
+        class="w-fit rounded-full border border-slate-700 bg-slate-900/70 px-4 py-2 text-sm text-slate-300 transition hover:bg-slate-800"
+        @click="goBack"
+      >
         {{ t('back_to_list') }}
-      </NuxtLink>
+      </button>
 
       <PokemonDetailCard
         :pokemon="selectedPokemon"
