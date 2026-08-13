@@ -12,6 +12,10 @@ const adapter = new PrismaPg({
 
 const prisma = new PrismaClient({ adapter })
 
+// Ne sont pas de vrais types de combat : "stellar" (spécifique au Téracristal)
+// et "unknown" (jamais assigné à un Pokémon).
+const EXCLUDED_TYPES = ["stellar", "unknown"]
+
 async function main() {
   console.log("🚀 Début de l'import...")
 
@@ -25,6 +29,11 @@ async function main() {
 
   const data = await response.json()
   for (const type of data.results) {
+    if (EXCLUDED_TYPES.includes(type.name)) {
+      console.log(`⏭️ ${type.name} ignoré (pas un vrai type)`)
+      continue
+    }
+
     const existing = await prisma.types.findFirst({
       where: {
         name: type.name,

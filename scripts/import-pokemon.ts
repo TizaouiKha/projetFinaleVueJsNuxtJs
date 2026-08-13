@@ -35,6 +35,7 @@ async function main() {
     if (existing) {
       const needsNameFr = !existing.nameFr
       const needsStats = existing.hp == null
+      const needsDefaultImage = !existing.defaultImage
       const updateData: Record<string, unknown> = {}
 
       if (needsNameFr) {
@@ -42,16 +43,23 @@ async function main() {
         if (nameFr) updateData.nameFr = nameFr
       }
 
-      if (needsStats) {
+      if (needsStats || needsDefaultImage) {
         const details = await pokemonDetails(existing.name)
-        Object.assign(updateData, {
-          hp: details.hp,
-          attack: details.attack,
-          defense: details.defense,
-          specialAttack: details.specialAttack,
-          specialDefense: details.specialDefense,
-          speed: details.speed,
-        })
+
+        if (needsStats) {
+          Object.assign(updateData, {
+            hp: details.hp,
+            attack: details.attack,
+            defense: details.defense,
+            specialAttack: details.specialAttack,
+            specialDefense: details.specialDefense,
+            speed: details.speed,
+          })
+        }
+
+        if (needsDefaultImage) {
+          updateData.defaultImage = details.defaultImage
+        }
       }
 
       if (Object.keys(updateData).length > 0) {

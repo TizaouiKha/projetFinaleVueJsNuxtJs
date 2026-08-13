@@ -10,6 +10,19 @@ export default defineEventHandler(async (event) => {
         });
     }
 
+    const existing = await prisma.team.findUnique({
+        where: {
+            id,
+        },
+    });
+
+    if (!existing) {
+        throw createError({
+            statusCode: 404,
+            statusMessage: 'Équipe introuvable',
+        });
+    }
+
     const deletedTeam = await prisma.team.delete({
         where: {
             id,
