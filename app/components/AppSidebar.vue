@@ -50,15 +50,6 @@ const close = () => emit('update:modelValue', false)
                 </NuxtLink>
 
                 <NuxtLink
-                    to="/duel"
-                    class="rounded-lg border border-slate-800 px-4 py-3 text-sm text-slate-300 transition hover:bg-slate-800"
-                    active-class="border-slate-700 bg-slate-800 text-white"
-                    @click="close"
-                >
-                    {{ t('nav_duel') }}
-                </NuxtLink>
-
-                <NuxtLink
                     to="/types"
                     class="rounded-lg border border-slate-800 px-4 py-3 text-sm text-slate-300 transition hover:bg-slate-800"
                     active-class="border-slate-700 bg-slate-800 text-white"
@@ -83,6 +74,15 @@ const close = () => emit('update:modelValue', false)
                     @click="close"
                 >
                     {{ t('nav_battle') }}
+                </NuxtLink>
+
+                <NuxtLink
+                    to="/duel"
+                    class="rounded-lg border border-slate-800 px-4 py-3 text-sm text-slate-300 transition hover:bg-slate-800"
+                    active-class="border-slate-700 bg-slate-800 text-white"
+                    @click="close"
+                >
+                    {{ t('nav_duel') }}
                 </NuxtLink>
             </nav>
         </aside>
