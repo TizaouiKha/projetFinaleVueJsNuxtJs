@@ -4,7 +4,6 @@ import { MAX_TEAM_SIZE, useTeamStore } from '../stores/team'
 import { useLocale } from '../composables/useLocale'
 import { useTeam } from '../composables/useTeam'
 import TeamSlot from './TeamSlot.vue'
-import TeamsDatatable from './TeamsDatatable.vue'
 
 const teamStore = useTeamStore()
 const { t } = useLocale()
@@ -15,22 +14,14 @@ const slots = computed(() => {
     return [...filled, ...empty]
 })
 
-const { allTeams, fetchTeams, saveTeam, saveMessage,saving } = useTeam();
-
-onMounted( async () => {
-   await fetchTeams();
-});
+const { saveTeam, saveMessage, saving } = useTeam()
 
 const createTeam = async () => {
-    try {
-        await saveTeam(teamStore.team);
-        teamStore.clearTeam();
-    } catch (error) {
-        console.error("Erreur lors de la création de l'équipe :", error);
+    const success = await saveTeam(teamStore.team)
+    if (success) {
+        teamStore.clearTeam()
     }
-};
-
-
+}
 </script>
 
 <template>
@@ -42,7 +33,13 @@ const createTeam = async () => {
                 <p class="text-slate-400">{{ t('pokemon_count', teamStore.teamCount, MAX_TEAM_SIZE) }}</p>
             </div>
 
-            <div class="flex flex-wrap gap-2">
+            <div class="flex flex-wrap items-center gap-2">
+                <NuxtLink
+                    to="/teams"
+                    class="w-fit rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:bg-slate-800"
+                >
+                    {{ t('view_saved_teams') }}
+                </NuxtLink>
                 <button
                     class="w-fit rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
                     :disabled="teamStore.teamCount === 0"
@@ -52,10 +49,10 @@ const createTeam = async () => {
                 </button>
                 <button
                     class="w-fit rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-2 text-sm text-slate-300 transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
-                    :disabled="teamStore.teamCount === 0 || teamStore.saving"
+                    :disabled="teamStore.teamCount === 0 || saving"
                     @click="createTeam"
                 >
-                    {{ saving ? 'Enregistrement …' : 'Sauvegarder la team' }}
+                    {{ saving ? t('saving_team') : t('save_team_button') }}
                 </button>
             </div>
         </header>
@@ -71,11 +68,5 @@ const createTeam = async () => {
                 @remove="teamStore.removeFromTeam"
             />
         </div>
-        <div class="mt-6">
-            <TeamsDatatable :teams="allTeams" />
-        </div>
-
-
-
     </section>
 </template>

@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event) as { pokemons?: unknown; team?: unknown }
   const rawTeam = body.pokemons ?? body.team
 
-  if (!Array.isArray(rawTeam)) {
+  if (!Array.isArray(rawTeam) || rawTeam.length === 0) {
     event.node.res.statusCode = 400
     return { error: 'Payload missing team data' }
   }

@@ -1,6 +1,7 @@
 import type { Pokemon } from "./pokemon"
 
 export interface Team {
-    id: string
+    id: number
     pokemons: Pokemon[]
+    createdAt: string
 }

@@ -1,14 +1,22 @@
 import { ref } from 'vue';
 import type { Team } from '../types/team';
 import type { Pokemon } from '../types/pokemon';
+import { useLocale } from './useLocale';
 
 export function useTeam() {
     const allTeams = useState<Team[]>('allTeams', () => []);
+    const saving = useState<boolean>('teamSaving', () => false);
+    const loading = useState<boolean>('teamsLoading', () => false);
     const saveMessage = ref('');
     const deleteMessage = ref('');
-    const saving = ref(false);
+    const fetchError = ref('');
+
+    const { t } = useLocale();
 
     const fetchTeams = async () => {
+        loading.value = true;
+        fetchError.value = '';
+
         try {
             const response = await fetch('/api/team');
 
@@ -19,12 +27,15 @@ export function useTeam() {
             allTeams.value = await response.json();
         } catch (err) {
             console.error(err);
+            fetchError.value = t('fetch_teams_error');
+        } finally {
+            loading.value = false;
         }
     };
 
     const saveTeam = async (team: Pokemon[]) => {
         if (team.length === 0) {
-            saveMessage.value = 'Pas de pokemons dans l\'équipe à sauvegarder.';
+            saveMessage.value = t('team_save_empty');
             return false;
         }
 
@@ -40,16 +51,16 @@ export function useTeam() {
             }) as { success?: boolean; error?: string };
 
             if (result?.success) {
-                saveMessage.value = 'Équipe sauvegardée avec succès.';
+                saveMessage.value = t('team_save_success');
                 await fetchTeams();
                 return true;
             }
 
-            saveMessage.value = result?.error ?? 'Erreur lors de la sauvegarde.';
+            saveMessage.value = result?.error ?? t('team_save_error');
             return false;
         } catch (err) {
             console.error(err);
-            saveMessage.value = 'Erreur lors de la sauvegarde.';
+            saveMessage.value = t('team_save_error');
             return false;
         } finally {
             saving.value = false;
@@ -63,10 +74,10 @@ export function useTeam() {
             });
 
             await fetchTeams();
-            deleteMessage.value = `L'equipe n°${teamId} a été supprimée avec succès.`;
+            deleteMessage.value = t('team_delete_success', teamId);
         } catch (err) {
             console.error(err);
-            deleteMessage.value = `Erreur lors de la suppression de l'équipe`;
+            deleteMessage.value = t('team_delete_error');
         }
     };
 
@@ -78,5 +89,7 @@ export function useTeam() {
         saveMessage,
         deleteMessage,
         saving,
+        loading,
+        fetchError,
     };
 }

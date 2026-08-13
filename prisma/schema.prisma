@@ -14,7 +14,8 @@ model Pokemon {
   id             Int      @id
   name           String   @unique
   nameFr         String?    // nom officiel français, nullable
-  image          String?    // nullable
+  image          String?    // nullable, sprite animé (Showdown), peut être absent
+  defaultImage   String?    // nullable, sprite statique de secours si `image` est absent/invalide
   height         Int?       // nullable
   weight         Int?       // nullable
   cry            String?    // nullable
