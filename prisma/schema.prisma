@@ -26,6 +26,7 @@ model Pokemon {
   specialAttack  Int?
   specialDefense Int?
   speed          Int?
+  moves          Json?      // 4 attaques offensives max, précalculées pour le combat
 }
 
 model User {
@@ -47,4 +48,11 @@ model Team {
   name      String?
   pokemons  String[]
   createdAt DateTime @default(now())
+}
+
+model NpcTeam {
+  id         Int      @id @default(autoincrement())
+  name       String
+  difficulty String   // easy | medium | hard
+  pokemons   String[]
 }

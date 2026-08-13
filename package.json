@@ -9,7 +9,8 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "import:pokemon": "tsx scripts/import-pokemon.ts",
-    "import:types": "tsx scripts/import-types.ts"
+    "import:types": "tsx scripts/import-types.ts",
+    "seed:npc-teams": "tsx scripts/seed-npc-teams.ts"
   },
   "dependencies": {
     "@pinia/nuxt": "^1.0.0",
