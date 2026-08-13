@@ -16,7 +16,7 @@ export default defineNuxtConfig({
     },
     middleware: {
       globalMiddlewareEnabled: true,
-      customLoginPage: false
+      customLoginPage: true
         }
   },
 
