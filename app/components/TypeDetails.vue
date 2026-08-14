@@ -7,10 +7,6 @@ const props = defineProps<{
   typeName: string
 }>()
 
-onMounted(() => {
-  console.log(props);
-})
-
 const { t, typeName: translateTypeName } = useLocale()
 </script>
 

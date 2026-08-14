@@ -52,7 +52,8 @@ const {
   search,
   nextPage,
   previousPage,
-} = usePokemon()
+  selectedType
+} = usePokemon(props.isTypePage)
 
 const { t } = useLocale()
 
@@ -71,15 +72,19 @@ const handleFilterByType = async (type: string | null) => {
   await loadPage(1, type)
 }
 
-watch(
-  () => props.initialType,
-  async (newType) => {
-    await loadPage(1, newType)
-  },
-  { immediate: true }
-)
-
 onMounted(async () => {
+  if (props.isTypePage) {
+    const typeChanged =
+      selectedType.value !== props.initialType
+
+    await loadPage(
+      typeChanged ? 1 : currentPage.value,
+      props.initialType
+    )
+  } else {
+    await loadPage(currentPage.value)
+  }
+
   if (props.showTypeFilter) {
     await fetchTypes()
   }
@@ -125,7 +130,7 @@ onMounted(async () => {
       </div>
 
       <div v-if="props.showTypeFilter" class="mt-4">
-        <TypesGrid :types="types" @filter-by-type="handleFilterByType" />
+        <TypesGrid :types="types" :isTypePage="props.isTypePage" @filter-by-type="handleFilterByType" />
       </div>
     </section>
 
