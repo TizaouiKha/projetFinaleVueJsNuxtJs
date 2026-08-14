@@ -65,10 +65,18 @@ const close = () => {
                     {{ t('nav_pokedex') }}
                 </NuxtLink>
 
-                <div class="rounded-lg border border-slate-800 px-4 py-3 text-sm text-slate-300 transition hover:bg-slate-800">
-                    <span @click="handleToggleShowItems">{{ t('nav_types') }}</span>
-                    <ul v-if="showTypes" class="grid grid-cols-2 gap-4 mt-6">
-                        <li v-for="(item, index) in types" :key="index">
+                <div class="rounded-lg border border-slate-800 text-sm text-slate-300 transition hover:bg-slate-800">
+                    <button
+                        type="button"
+                        class="flex w-full items-center justify-between px-4 py-3"
+                        :aria-expanded="showTypes"
+                        @click="handleToggleShowItems"
+                    >
+                        <span>{{ t('nav_types') }}</span>
+                        <span class="inline-block transition-transform" :class="{ 'rotate-180': showTypes }">▾</span>
+                    </button>
+                    <ul v-if="showTypes" class="grid grid-cols-2 gap-4 px-4 pb-4">
+                        <li v-for="item in types" :key="item.name">
                             <TypeTag :type="item.name" @click="close"/>
                         </li>
                     </ul>

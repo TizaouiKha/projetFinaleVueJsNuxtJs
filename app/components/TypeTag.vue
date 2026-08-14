@@ -17,7 +17,7 @@ const redirectTo = () => {
 const { typeName } = useLocale()
 </script>
 <template>
-    <span @click="redirectTo" class="border-white rounded-full px-3 py-1 text-white" :class="pokemonTypeColors[type]">
+    <span @click="redirectTo" class="border-white rounded-full px-3 py-1 text-white cursor-pointer" :class="pokemonTypeColors[type]">
         {{ typeName(type) }}
     </span>
 </template>
