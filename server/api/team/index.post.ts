@@ -1,7 +1,10 @@
 import { readBody } from 'h3'
 import prisma from '../../utils/prisma'
+import { requireUserId } from '../../utils/auth'
 
 export default defineEventHandler(async (event) => {
+  const userId = await requireUserId(event)
+
   const body = await readBody(event) as { pokemons?: unknown; team?: unknown; name?: unknown }
   const rawTeam = body.pokemons ?? body.team
 
@@ -27,6 +30,7 @@ export default defineEventHandler(async (event) => {
     data: {
       name,
       pokemons: pokemons as string[],
+      userId,
     },
   })
 

@@ -5,6 +5,13 @@ import AppSidebar from '~/components/AppSidebar.vue'
 
 const { locale, toggleLocale, t } = useLocale()
 const isSidebarOpen = ref(false)
+
+const { loggedIn, clear } = useOidcAuth()
+
+const handleLogout = async () => {
+  await clear()
+  await navigateTo('/auth/login')
+}
 </script>
 
 <template>
@@ -28,13 +35,23 @@ const isSidebarOpen = ref(false)
         </NuxtLink>
       </div>
 
-      <button
-        class="rounded-full border border-slate-700 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-300 transition hover:bg-slate-800"
-        :title="locale === 'fr' ? 'Switch to English' : 'Passer en français'"
-        @click="toggleLocale"
-      >
-        {{ locale === 'fr' ? '🇫🇷 FR' : '🇬🇧 EN' }}
-      </button>
+      <div class="flex items-center gap-2">
+        <button
+          class="rounded-full border border-slate-700 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-300 transition hover:bg-slate-800"
+          :title="locale === 'fr' ? 'Switch to English' : 'Passer en français'"
+          @click="toggleLocale"
+        >
+          {{ locale === 'fr' ? '🇫🇷 FR' : '🇬🇧 EN' }}
+        </button>
+
+        <button
+          v-if="loggedIn"
+          class="rounded-full border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-300 transition hover:bg-slate-800"
+          @click="handleLogout"
+        >
+          {{ t('logout') }}
+        </button>
+      </div>
     </nav>
 
     <AppSidebar v-model="isSidebarOpen" />

@@ -35,6 +35,7 @@ model User {
   password String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  teams Team[]
 }
 
 model Types {
@@ -48,6 +49,8 @@ model Team {
   name      String?
   pokemons  String[]
   createdAt DateTime @default(now())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
 }
 
 model NpcTeam {

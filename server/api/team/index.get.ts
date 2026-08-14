@@ -1,7 +1,11 @@
 import prisma from '../../utils/prisma'
+import { requireUserId } from '../../utils/auth'
 
-export default defineEventHandler(async () => {
+export default defineEventHandler(async (event) => {
+    const userId = await requireUserId(event)
+
     const teams = await prisma.team.findMany({
+        where: { userId },
         orderBy: {
             createdAt: 'desc',
         },

@@ -1,6 +1,8 @@
 import prisma from '../../utils/prisma';
+import { requireUserId } from '../../utils/auth';
 
 export default defineEventHandler(async (event) => {
+    const userId = await requireUserId(event);
     const id = Number(getRouterParam(event, 'id'));
 
     if (!id) {
@@ -20,6 +22,13 @@ export default defineEventHandler(async (event) => {
         throw createError({
             statusCode: 404,
             statusMessage: 'Équipe introuvable',
+        });
+    }
+
+    if (existing.userId !== userId) {
+        throw createError({
+            statusCode: 403,
+            statusMessage: 'Cette équipe ne t\'appartient pas',
         });
     }
 
