@@ -8,6 +8,8 @@ const props = defineProps<{
   pokemon: Pokemon
   beforeEvolution?: string
   afterEvolution?: string
+  beforeEvolutionFr?: string | null
+  afterEvolutionFr?: string | null
 }>()
 
 const teamStore = useTeamStore()
@@ -106,7 +108,7 @@ const statRows = computed(() => [
                 :to="`/pokemon/${props.beforeEvolution}`"
                 class="block text-sm font-semibold capitalize text-cyan-400 hover:underline"
               >
-                {{ props.beforeEvolution }}
+                {{ pokemonName({ name: props.beforeEvolution ?? '', nameFr: props.beforeEvolutionFr }) }}
               </NuxtLink>
               <p v-else class="text-sm font-semibold capitalize text-cyan-400">
                 {{ t('none') }}
@@ -119,7 +121,7 @@ const statRows = computed(() => [
                 :to="`/pokemon/${props.afterEvolution}`"
                 class="block text-sm font-semibold capitalize text-cyan-400 hover:underline"
               >
-                {{ props.afterEvolution }}
+                {{ pokemonName({ name: props.afterEvolution ?? '', nameFr: props.afterEvolutionFr }) }}
               </NuxtLink>
               <p v-else class="text-sm font-semibold capitalize text-cyan-400">
                 {{ t('none') }}

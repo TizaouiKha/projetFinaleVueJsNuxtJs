@@ -6,7 +6,7 @@ import type { Pokemon } from '@/types/pokemon'
 
 const route = useRoute()
 const router = useRouter()
-const { beforeEvolution, afterEvolution, getPokemonEvolutions, getMoves, moves } = usePokemonEvolutions()
+const { beforeEvolution, afterEvolution, beforeEvolutionFr, afterEvolutionFr, getPokemonEvolutions, getMoves, moves } = usePokemonEvolutions()
 const { t } = useLocale()
 
 const goBack = () => {
@@ -112,6 +112,8 @@ watch(
         :pokemon="selectedPokemon"
         :before-evolution="beforeEvolution"
         :after-evolution="afterEvolution"
+        :before-evolution-fr="beforeEvolutionFr"
+        :after-evolution-fr="afterEvolutionFr"
       />
       <div class="flex items-center gap-3">
         <p v-if="cryAttempted && cryAutoplayFailed" class="text-sm text-slate-400">{{ t('cry_autoplay_blocked') }}</p>
