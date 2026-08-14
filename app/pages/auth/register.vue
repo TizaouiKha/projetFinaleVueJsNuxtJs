@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const username = ref('')
+const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
 const error = ref('')
@@ -17,7 +17,7 @@ async function onSubmit() {
   try {
     await $fetch('/api/auth/register', {
       method: 'POST',
-      body: { username: username.value, password: password.value }
+      body: { username: email.value, password: password.value }
     })
     await navigateTo('/auth/login')
   } catch (e: any) {
@@ -33,7 +33,7 @@ async function onSubmit() {
     <h1 class="text-xl font-bold">Inscription</h1>
 
     <form class="space-y-3" @submit.prevent="onSubmit">
-      <input v-model="username" type="text" placeholder="Nom d'utilisateur" required class="border p-2 w-full" />
+      <input v-model="email" type="email" placeholder="Email" required class="border p-2 w-full" />
       <input v-model="password" type="password" placeholder="Mot de passe" required class="border p-2 w-full" />
       <input v-model="confirmPassword" type="password" placeholder="Confirmer le mot de passe" required class="border p-2 w-full" />
       <p v-if="error" class="text-red-600 text-sm">{{ error }}</p>
