@@ -24,7 +24,13 @@ const handleToggleShowItems = () => {
 const { types, fetchTypes } = usePokemon()
 const teamStore = useTeamStore()
 const { t } = useLocale()
-fetchTypes()
+const { loggedIn } = useOidcAuth()
+
+onMounted(() => {
+    if (loggedIn.value) {
+        fetchTypes()
+    }
+})
 
 const close = () => {
     emit('update:modelValue', false)

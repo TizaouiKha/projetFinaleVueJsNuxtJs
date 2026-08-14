@@ -29,16 +29,11 @@ const fetchPokemon = async (name: string) => {
   afterEvolution.value = ''
 
   try {
-    const res = await fetch(`/api/pokemon/${encodeURIComponent(name)}`)
-    if (!res.ok) {
-      selectedPokemon.value = null
-    } else {
-      selectedPokemon.value = await res.json()
-      if (selectedPokemon.value?.id) {
-        await getPokemonEvolutions(selectedPokemon.value.id)
-        await getMoves(selectedPokemon.value.name)
-        tryPlayCry()
-      }
+    selectedPokemon.value = await $fetch<Pokemon>(`/api/pokemon/${encodeURIComponent(name)}`)
+    if (selectedPokemon.value?.id) {
+      await getPokemonEvolutions(selectedPokemon.value.id)
+      await getMoves(selectedPokemon.value.name)
+      tryPlayCry()
     }
   } catch (e) {
     selectedPokemon.value = null

@@ -9,9 +9,7 @@ export function usePokemonEvolutions() {
 
     const fetchNameFr = async (name: string): Promise<string | null> => {
         try {
-            const res = await fetch(`/api/pokemon/${encodeURIComponent(name)}`)
-            if (!res.ok) return null
-            const data = await res.json()
+            const data = await $fetch<{ nameFr?: string | null }>(`/api/pokemon/${encodeURIComponent(name)}`)
             return data?.nameFr ?? null
         } catch {
             return null
