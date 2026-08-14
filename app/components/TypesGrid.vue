@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { useLocale } from "~/composables/useLocale";
+import { ref } from 'vue'
+import { useLocale } from "~/composables/useLocale"
+import { useListStore } from '~/stores/list';
 
 const props = defineProps<{
-    types: { name: string, url: string }[]
+    types: { name: string, url: string }[],
 }>()
 
 const emit = defineEmits<{
@@ -12,7 +14,12 @@ const emit = defineEmits<{
 
 const { t, typeName } = useLocale()
 
+const listStore = useListStore();
+
+const selectedType = ref<string | null>(listStore.home.selectedType);
+
 const setType = (type: string | null) => {
+    selectedType.value = type
     emit('filterByType', type)
     emit('redirect', type ?? '')
 }
@@ -34,6 +41,15 @@ const setType = (type: string | null) => {
                 {{ typeName(type.name) }}
             </button>
         </div>
+        <p class="mt-2 text-sm">
+            {{ t('selected_type') }} :
+            <span v-if="selectedType === null">
+                {{ t('all_types') }}
+            </span>
+            <span v-else>
+                <TypeTag :type="selectedType"/>
+            </span>
+        </p>
 
 
     </div>

@@ -1,18 +1,25 @@
+import { defineStore } from 'pinia'
+import { reactive } from 'vue'
+
 export const useListStore = defineStore('list', () => {
-    const currentPage = ref(1)
-    const itemsPerPage = ref(20)
-    const totalItems = ref(0)
-    const searchQuery = ref('')
-    const selectedType = ref<string | null>(null)
+  const home = reactive({
+    currentPage: 1,
+    itemsPerPage: 20,
+    totalItems: 0,
+    searchQuery: '',
+    selectedType: null as string | null,
+  })
 
-    const totalPages = computed(() => Math.max(1, Math.ceil(totalItems.value / itemsPerPage.value)))
+  const type = reactive({
+    currentPage: 1,
+    itemsPerPage: 20,
+    totalItems: 0,
+    searchQuery: '',
+    selectedType: null as string | null,
+  })
 
-    return {
-        currentPage,
-        itemsPerPage,
-        totalItems,
-        searchQuery,
-        selectedType,
-        totalPages,
-    }
-});
+  return {
+    home,
+    type,
+  }
+})

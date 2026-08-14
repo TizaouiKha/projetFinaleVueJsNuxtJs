@@ -1,15 +1,28 @@
-import { ref, computed } from 'vue'
+import { ref, computed, toRefs } from 'vue'
 import type { Pokemon } from '../types/pokemon'
 import type { PokemonType } from '../types/pokemonType'
+import { useListStore } from '../stores/list'
 
-export function usePokemon() {
+export function usePokemon(isTypePage = false) {
+    const listStore = useListStore();
+    const state = isTypePage ? listStore.type : listStore.home;
+
+    const {
+        currentPage,
+        itemsPerPage,
+        totalItems,
+        searchQuery,
+        selectedType,
+    } = toRefs(state);
+
+    const totalPages = computed(() =>
+        Math.max(
+            1,
+            Math.ceil(totalItems.value / itemsPerPage.value)
+        )
+    )
     const allPokemons = ref<Pokemon[]>([])
     const types = ref<PokemonType[]>([])
-    const itemsPerPage = ref(20)
-    const currentPage = ref(1)
-    const total = ref(0)
-    const search = ref('')
-    const selectedType = ref<string | null>(null)
 
     const fetchPage = async (page = 1, type?: string | null) => {
         try {
@@ -23,7 +36,7 @@ export function usePokemon() {
             params.set('limit', String(limit))
             params.set('offset', String(offset))
             if (selectedType.value) params.set('type', selectedType.value)
-            if (search.value) params.set('search', search.value)
+            if (searchQuery.value) params.set('search', searchQuery.value)
 
             const response = await fetch(`/api/pokemon?${params.toString()}`)
 
@@ -33,19 +46,16 @@ export function usePokemon() {
 
             const res = await response.json()
             allPokemons.value = res.data ?? []
-            total.value = res.total ?? allPokemons.value.length
+            totalItems.value = res.total ?? allPokemons.value.length
             currentPage.value = page
         } catch (err) {
             console.error(err)
         }
     }
 
-    const totalPages = computed(() => Math.max(1, Math.ceil(total.value / itemsPerPage.value)))
-
     const fetchTypes = async () => {
         try {
             const response = await fetch('/api/types')
-
             if (!response.ok) {
                 throw new Error('Erreur lors de la récupération des types')
             }
@@ -58,20 +68,26 @@ export function usePokemon() {
     }
 
     const fetchPokemonsByType = async (type: string | null) => {
+        selectedType.value = type
+        currentPage.value = 1
         await fetchPage(1, type)
     }
 
     const nextPage = async () => {
-        if (currentPage.value < totalPages.value) {
-            await fetchPage(currentPage.value + 1)
+        if (currentPage.value >= totalPages.value) {
+            return
         }
+        await fetchPage(currentPage.value + 1)
     }
 
     const previousPage = async () => {
-        if (currentPage.value > 1) {
-            await fetchPage(currentPage.value - 1)
+        if (currentPage.value <= 1) {
+            return
         }
+
+        await fetchPage(currentPage.value - 1)
     }
+
 
     return {
         allPokemons,
@@ -83,8 +99,9 @@ export function usePokemon() {
         fetchTypes,
         fetchPokemonsByType,
         currentPage,
-        total,
-        search,
+        total: totalItems,
+        search: searchQuery,
+        selectedType,
         nextPage,
         previousPage,
     }
