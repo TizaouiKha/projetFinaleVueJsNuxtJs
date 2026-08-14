@@ -38,13 +38,8 @@ export function usePokemon(isTypePage = false) {
             if (selectedType.value) params.set('type', selectedType.value)
             if (searchQuery.value) params.set('search', searchQuery.value)
 
-            const response = await fetch(`/api/pokemon?${params.toString()}`)
+            const res = await $fetch<{ data: Pokemon[]; total: number }>(`/api/pokemon?${params.toString()}`)
 
-            if (!response.ok) {
-                throw new Error('Erreur lors de la récupération des Pokémon')
-            }
-
-            const res = await response.json()
             allPokemons.value = res.data ?? []
             totalItems.value = res.total ?? allPokemons.value.length
             currentPage.value = page
@@ -55,13 +50,7 @@ export function usePokemon(isTypePage = false) {
 
     const fetchTypes = async () => {
         try {
-            const response = await fetch('/api/types')
-            if (!response.ok) {
-                throw new Error('Erreur lors de la récupération des types')
-            }
-
-            const data = await response.json()
-            types.value = data
+            types.value = await $fetch<PokemonType[]>('/api/types')
         } catch (err) {
             console.error(err)
         }
