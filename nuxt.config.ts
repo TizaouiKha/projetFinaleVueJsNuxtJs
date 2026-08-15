@@ -1,24 +1,32 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
+import tailwindcss from '@tailwindcss/vite'
+
 export default defineNuxtConfig({
-  compatibilityDate: '2025-07-15',
-  devtools: { enabled: true },
-  modules: ['@nuxt/eslint', '@pinia/nuxt'],
-  
-  pinia: {
-    storesDirs: ['./app/stores/**'],
-  },
-
-  // on déclare l'URL de l'API ici (propre + réutilisable)
-  runtimeConfig: {
-    public: {
-      pokeApiBase: 'http://localhost:3000/api',
+  modules: ['@pinia/nuxt', 'nuxt-oidc-auth'],
+  oidc: {
+    defaultProvider: 'github',
+    providers: {
+      github: {
+        clientId: process.env.CLIENT_ID,
+        clientSecret: process.env.CLIENT_SECRET,
+        redirectUri: 'http://localhost:3000/auth/github/callback',
+        postLogoutRedirectUri: 'http://localhost:3000/',
+        responseType: 'code',
+        scope: ['openid', 'profile', 'email']
+      }
     },
+    middleware: {
+      globalMiddlewareEnabled: true,
+      customLoginPage: true
+        }
   },
 
-  eslint: {
-    config: {
-      stylistic: true
-    }
+  css: [
+    '~/assets/css/main.css'
+  ],
+
+  vite: {
+    plugins: [
+      tailwindcss()
+    ]
   }
 })
-

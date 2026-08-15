@@ -8,23 +8,27 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "test": "vitest"
+    "import:pokemon": "tsx scripts/import-pokemon.ts",
+    "import:types": "tsx scripts/import-types.ts",
+    "seed:npc-teams": "tsx scripts/seed-npc-teams.ts"
   },
   "dependencies": {
-    "@nuxt/eslint": "^1.16.0",
-    "@pinia/nuxt": "^0.11.3",
-    "eslint": "^10.5.0",
+    "@pinia/nuxt": "^1.0.0",
+    "@prisma/adapter-pg": "^7.9.1",
+    "@prisma/client": "^7.9.1",
+    "@tailwindcss/vite": "^4.3.2",
+    "bcryptjs": "^3.0.3",
     "nuxt": "^4.4.8",
-    "pinia": "^3.0.4",
+    "nuxt-oidc-auth": "^1.0.0-beta.11",
+    "pinia": "^4.0.2",
+    "prisma": "^7.9.1",
+    "tailwindcss": "^4.3.2",
     "vue": "^3.5.38",
     "vue-router": "^5.1.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^6.0.7",
-    "@vue/test-utils": "^2.4.11",
-    "jsdom": "^29.1.1",
-    "vitest": "^4.1.9"
+    "@tailwindcss/postcss": "^4.3.2",
+    "@types/bcryptjs": "^2.4.6",
+    "tsx": "^4.23.8"
   }
 }
